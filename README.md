@@ -1,5 +1,5 @@
-# Pixi.js starter project with Webpack
-This starter project will help you setup a quick Pixi.js project with Webpack setup, ES6 features included.
+# Interactive Intel Processor Timeline 
+This project is an interactive infographic showcasing intel processors throughout history.
 ### Get started
 
 Development
