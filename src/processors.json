@@ -11,7 +11,8 @@
       "legacy_date": 1981,
       "clock_speeds": { "min": { "value": 108, "unit": "KHz", "simple": 108000}, "max": { "value": 740, "unit": "KHz", "simple": 740000} },
       "transistors": 2300,
-      "manufacturing_technology": "10μm"
+      "manufacturing_technology": "10μm",
+      "trivia": "Originally designed to be used in Busicom(Japanese Company) calculator"
     },
     {
       "id": 2,
@@ -23,7 +24,8 @@
       "legacy_date": 1981,
       "clock_speeds": { "min": { "value": 108, "unit": "KHz", "simple": 108000}, "max": { "value": 740, "unit": "KHz", "simple": 740000} },
       "transistors": 3000,
-      "manufacturing_technology": "10μm"
+      "manufacturing_technology": "10μm",
+      "trivia": "Used in a large number of early video games and gaming machines such as the Bailey shuffleboard."
     },
     {
       "id": 3,
@@ -35,7 +37,8 @@
       "legacy_date": 1983,
       "clock_speeds": { "min": { "value": 200, "unit": "KHz", "simple": 200000}, "max": { "value": 800, "unit": "KHz", "simple": 800000} },
       "transistors": 3500,
-      "manufacturing_technology": "10μm"
+      "manufacturing_technology": "10μm",
+      "trivia": "Developed in tandem with 4004.\nOriginally intended for use in the Datapoint 2200 microcomputer.\nAlso used in Texas Instruments 742 microcomputer"
     },
     {
       "id": 4,
@@ -47,7 +50,8 @@
       "legacy_date": 1983,
       "clock_speeds": { "min": { "value": 2, "unit": "MHz", "simple": 2000000}, "max": { "value": 3.125, "unit": "MHz", "simple": 3125000} },
       "transistors": 4500,
-      "manufacturing_technology": "6μm"
+      "manufacturing_technology": "6μm",
+      "trivia": "Up to 10× the performance of the 8008.\nUsed in e.g. the Altair 8800, traffic light controller, cruise missile"
     },
     {
       "id": 5,
@@ -59,7 +63,8 @@
       "legacy_date": 1993,
       "clock_speeds": { "min": { "value": 3, "unit": "MHz", "simple": 3000000}, "max": { "value": 6, "unit": "MHz", "simple": 6000000} },
       "transistors": 6500,
-      "manufacturing_technology": "3μm"
+      "manufacturing_technology": "3μm",
+      "trivia": "Used in Toledo scales. Also used as a computer peripheral controller – modems, hard disks, printers, etc"
     },
     {
       "id": 6,
@@ -71,7 +76,8 @@
       "legacy_date": 1993,
       "clock_speeds": { "min": { "value": 5, "unit": "MHz", "simple": 5000000}, "max": { "value": 10, "unit": "MHz", "simple": 10000000} },
       "transistors": 29000,
-      "manufacturing_technology": "3μm"
+      "manufacturing_technology": "3μm",
+      "trivia": "The first x86 CPU.\nUp to 10× the performance of 8080.\nFirst used in the Compaq Deskpro IBM PC-compatible computers. Later used in portable computing, and in the IBM PS/2 Model 25 and Model 30. Also used in the AT&T PC6300 / Olivetti M24, a popular IBM PC-compatible (predating the IBM PS/2 line)"
     },
     {
       "id": 7,
@@ -83,7 +89,8 @@
       "legacy_date": 1993,
       "clock_speeds": { "min": { "value": 6, "unit": "MHz", "simple": 6000000}, "max": { "value": 25, "unit": "MHz", "simple": 25000000} },
       "transistors": 134000,
-      "manufacturing_technology": "1.5μm"
+      "manufacturing_technology": "1.5μm",
+      "trivia": "3–6× the performance of the 8086.\nWidely used in IBM PC AT and AT clones contemporary to it."
     },
     {
       "id": 8,
@@ -95,7 +102,8 @@
       "legacy_date": 2007,
       "clock_speeds": { "min": { "value": 12, "unit": "MHz", "simple": 12000000}, "max": { "value": 40, "unit": "MHz", "simple": 40000000} },
       "transistors": 275000,
-      "manufacturing_technology": "1.5μm"
+      "manufacturing_technology": "1.5μm",
+      "trivia": "3–4× the performance of the 8086.\nFirst x86 chip to handle 32-bit data sets.\nFirst used by Compaq in the Deskpro 386. Used in desktop computing."
     },
     {
       "id": 9,
@@ -107,7 +115,8 @@
       "legacy_date": 2007,
       "clock_speeds": { "min": { "value": 25, "unit": "MHz", "simple": 25000000}, "max": { "value": 100, "unit": "MHz", "simple": 100000000} },
       "transistors": 1200000,
-      "manufacturing_technology": "1μm"
+      "manufacturing_technology": "1μm",
+      "trivia": "55× performance of the 8086.\nUsed in Desktop computing and servers."
     },
     {
       "id": 10,
@@ -119,7 +128,8 @@
       "release_date": 1993,
       "clock_speeds": { "min": { "value": 66, "unit": "MHz", "simple": 66000000}, "max": { "value": 300, "unit": "MHz", "simple": 300000000} },
       "transistors": 3100000,
-      "manufacturing_technology": "0.8μm"
+      "manufacturing_technology": "0.8μm",
+      "trivia": "Intel's first trademarked processor. Used in desktops."
     },
     {
       "id": 11,
@@ -132,7 +142,8 @@
       "legacy_date": 1983,
       "clock_speeds": { "min": { "value": 150, "unit": "MHz", "simple": 150000000}, "max": { "value": 200, "unit": "MHz", "simple": 200000000} },
       "transistors": 5500000,
-      "manufacturing_technology": "0.35μm"
+      "manufacturing_technology": "0.35μm",
+      "trivia": "Originally intended to replace the original Pentium, but was later reduced to a more narrow role as a server and high-end desktop processor and was used in supercomputers like ASCI Red, the first computer to reach the teraFLOPS performance mark."
     },
     {
       "id": 12,
@@ -145,7 +156,8 @@
       "legacy_date": 1997,
       "clock_speeds": { "min": { "value": 300, "unit": "MHz", "simple": 300000000}, "max": { "value": 450, "unit": "MHz", "simple": 450000000} },
       "transistors": 7500000,
-      "manufacturing_technology": "0.25μm"
+      "manufacturing_technology": "0.25μm",
+      "trivia": "Intel's first slot-based module rather using than a CPU socket."
     },
     {
       "id": 13,
@@ -157,7 +169,8 @@
       "release_date": 1998,
       "clock_speeds": { "min": { "value": 533, "unit": "MHz", "simple": 533000000}, "max": { "value": 950, "unit": "MHz", "simple": 950000000} },
       "transistors": 7500000,
-      "manufacturing_technology": "0.25μm"
+      "manufacturing_technology": "0.25μm",
+      "trivia": "The Celeron was essentially an under-clocked Pentium II released to serve a low performance and low budget consumer market."
     },
     {
       "id": 14,
@@ -169,7 +182,8 @@
       "release_date": 1998,
       "clock_speeds": { "min": { "value": 600, "unit": "MHz", "simple": 600000000}, "max": { "value": 1.133, "unit": "GHz", "simple": 1133000000} },
       "transistors": 9500000,
-      "manufacturing_technology": "0.25μm"
+      "manufacturing_technology": "0.25μm",
+      "trivia": ""
     },
     {
       "id": 15,
@@ -181,7 +195,8 @@
       "release_date": 2000,
       "clock_speeds": { "min": { "value": 1.3, "unit": "GHz", "simple": 1300000000}, "max": { "value": 3.8, "unit": "GHz", "simple": 3800000000} },
       "transistors": 42000000,
-      "manufacturing_technology": "0.18μm"
+      "manufacturing_technology": "0.18μm",
+      "trivia": ""
     },
     {
       "id": 16,
@@ -193,7 +208,8 @@
       "release_date": 2003,
       "clock_speeds": { "min": { "value": 900, "unit": "MHz", "simple": 90000000}, "max": { "value": 2.26, "unit": "GHz", "simple": 2260000000} },
       "transistors": 55000000,
-      "manufacturing_technology": "90nm"
+      "manufacturing_technology": "90nm",
+      "trivia": "Intel's flagship processor for mobile devices. Based on Pentium (P5) Micro-architecture"
     },
     {
       "id": 17,
@@ -206,7 +222,8 @@
       "clock_speeds": { "min": { "value": 1.2, "unit": "GHz", "simple": 1200000000}, "max": { "value": 3, "unit": "GHz", "simple": 3000000000} },
       "cores": [1, 2, 4, 6],
       "transistors": 291000000,
-      "manufacturing_technology": "65nm"
+      "manufacturing_technology": "65nm",
+      "trivia": "Introduced Integrated GPUs into their processors. This eliminated the need for a dedicated Graphics card in low to mid end computers and workstations."
     },
     {
       "id": 18,
@@ -219,7 +236,8 @@
       "clock_speeds": { "min": { "value": 1.6, "unit": "GHz", "simple": 1600000000}, "max": { "value": 2.6, "unit": "GHz", "simple": 2600000000} },
       "cores": [1, 2, 4, 8],
       "transistors": 47000000,
-      "manufacturing_technology": "45nm"
+      "manufacturing_technology": "45nm",
+      "trivia": "Based on successor to the Pentium M, now based on Core Micro-architecture. Now mobile devices' processors have the power of multiple cores and multi-threading capabilities."
     },
     {
       "id": 19,
@@ -232,7 +250,8 @@
       "clock_speeds": { "min": { "value": 2.2, "unit": "GHz", "simple": 2200000000}, "max": { "value": 3.9, "unit": "GHz", "simple": 3900000000} },
       "cores": [4],
       "transistors": 1160000000,
-      "manufacturing_technology": "32nm"
+      "manufacturing_technology": "32nm",
+      "trivia": "Intel's current mainstream processors, including the i#, i5, and i7 Processors."
     },
     {
       "id": 20,
@@ -245,7 +264,8 @@
       "clock_speeds": { "min": { "value": 2.9, "unit": "GHz", "simple": 2800000000}, "max": { "value": 4, "unit": "GHz", "simple": 4000000000} },
       "cores": [4, 6, 8],
       "transistors": 1400000000,
-      "manufacturing_technology": "22nm"
+      "manufacturing_technology": "22nm",
+      "trivia": ""
     }
   ]
 }

@@ -32,11 +32,12 @@ const app = window.app = new PIXI.Application({
 const Settings = window.Settings = {
   clockMin: 108000,
   clockMax: 5000000000,
+  currentLine: null,
   currentProcessor: null,
   currentIndex: null,
   currentMetadata: {
     min: 0,
-    max: 200,
+    max: 0,
     transistors: 0,
   },
   fontFamily: 'Exo 2',
@@ -99,6 +100,7 @@ setupProcessorView();
 
 PIXI.loaders.Resource.setExtensionLoadType('mp4', PIXI.loaders.Resource.LOAD_TYPE.VIDEO);
 loader
+  //  Processor data and images
   .add('processors', 'src/processors.json')
   .add('4004', 'src/assets/processors/4004.png')
   .add('4040', 'src/assets/processors/4040.png')
@@ -120,12 +122,17 @@ loader
   .add('Atom', 'src/assets/processors/Atom.png')
   .add('Core 2nd Gen', 'src/assets/processors/Core 2nd Gen.png')
   .add('Core 3rd Gen', 'src/assets/processors/Core 3rd Gen.png')
-  // .add('particle5', 'src/assets/dot-5.png')
   .add('bgVideo', 'src/assets/Molecular_Plex_4K_Motion_Background_Loop.mp4')
+  //
   .add('leftArrow', 'src/assets/arrow_left_white_24dp_2x.png')
   .add('rightArrow', 'src/assets/arrow_right_white_24dp_2x.png')
   .add('info', 'src/assets/info_white_24dp_2x.png')
+  .add('about', 'src/assets/about.png')
+  .add('share', 'src/assets/share_white_24dp_2x.png')
   .add('timelineBackground', 'src/assets/groovepaper.png')
+  // Progress Loader
+  .on("progress", loadProgressHandler)
+  
   .load((loader, resources) => {
     createBackground(false);
   
@@ -157,19 +164,71 @@ loader
   
     createTimeline();
   
+    let about = new Sprite(resources.about.texture);
+    about.anchor.set(1, .5);
+    about.scale.set(.5);
+    about.position.set(app.renderer.width - 10, 20);
+    about.interactive = true;
+    about.buttonMode = true;
+    about.on('mouseover', function (event) {
+      event.target.tint = 0xDDDDDD;
+    });
+    about.on('mouseout', function (event) {
+      event.currentTarget.tint = 0xFFFFFF;
+    });
+    about.on('click', aboutClick);
+    about.on('tap', aboutClick);
+  
     app.stage.addChild(Settings.Timeline);
     app.stage.addChild(Settings.Processor);
-    app.stage.addChild(LeftArrow, RightArrow);
+    app.stage.addChild(LeftArrow, RightArrow, about);
     // app.stage.addChild(title);
     app.stage.addChild(Settings.Overlay);
   
-    let deg = 0;
+    // load first processor
+    nextProcessor();
     app.ticker.add((delta) => {
 
     });
   
     console.log(Settings);
   });
+
+function loadProgressHandler(loader, resource) {
+  //Display the file `url` currently being loaded
+  console.log("loading: " + resource.url);
+  
+  //Display the percentage of files currently loaded
+  console.log("progress: " + loader.progress + "%");
+  
+  //If you gave your files names as the first argument
+  //of the `add` method, you can access them like this
+  //console.log("loading: " + resource.name);
+  let style = {align: 'center', fontFamily: Settings.fontFamily, fontSize: 20, fill: 'white'};
+  let lText = new PIXI.Text('Loading', style);
+  let lTextProgress = new PIXI.Text(Math.round(loader.progress) + '%', _.extend(style, { fontSize: 25 }));
+  lText.anchor.set(.5);
+  lTextProgress.anchor.set(.5, 0);
+  lText.position.set(app.renderer.width/2, app.renderer.height/2);
+  lTextProgress.position.set(app.renderer.width/2, lText.y + 40);
+  let min = app.renderer.width/2 - 200;
+  let max = map_range(loader.progress, 0, 100, 0, 400);
+  let speedBarUnder = new graphics().lineStyle(3, 0xFFFFFF, 1).beginFill(0x333333, 1).drawRoundedRect(0, 0, 402, 52, 10);
+  let speedBar = new graphics().beginFill(0xFFFFFF).drawRoundedRect(0, 0, 400, 50, 10);
+  let speedBarOverlay = new graphics().beginFill(0xFFFFFF, .5).drawRoundedRect(0, 0, max, 50, 10);
+  let speedBarSprite = new Sprite(PIXI.Texture.fromCanvas(createGradient('#1073C2', '#FF9405', max, 50)));
+  speedBarSprite.width = max;
+  speedBarSprite.mask = speedBar;
+  speedBar.position.set(min, lText.y + 30);
+  speedBarOverlay.position.set(min, lText.y + 30);
+  speedBarOverlay.blendMode = 4;
+  speedBarSprite.position.set(min, lText.y + 30);
+  speedBarUnder.position.set(min-1, lText.y + 30-1);
+  speedBar.cacheAsBitmap = true;
+  speedBarUnder.cacheAsBitmap = true;
+  app.stage.addChild(lText, speedBarUnder, speedBarSprite, speedBar, speedBarOverlay, lTextProgress);
+  
+}
 
 const createTimeline = () => {
   let timelineWidth = app.renderer.width - timelineOffsetX;
@@ -196,22 +255,28 @@ const createTimeline = () => {
     Settings.Timeline.addChild(text)
   }
   // Lines
-  const topLine = new graphics();
+  let topLine = new graphics();
   topLine.lineStyle(5, 0x000000, .33);
   topLine.moveTo(-100, timleineTop);
   topLine.lineTo(app.renderer.width, timleineTop);
   topLine.pivot.set(.5);
   topLine.cacheAsBitmap = true;
   
-  Settings.Timeline.addChild(topLine);
-  
-  const bottomLine = new graphics();
+  let bottomLine = new graphics();
   bottomLine.lineStyle(3, 0x000000, .13);
   bottomLine.moveTo(-100, timelineBase - 25);
   bottomLine.lineTo(app.renderer.width, timelineBase - 25);
   bottomLine.pivot.set(.5);
   bottomLine.cacheAsBitmap = true;
-  Settings.Timeline.addChild(bottomLine);
+  
+  Settings.currentLine = new graphics();
+  Settings.currentLine.lineStyle(2, 0x000000, .23);
+  Settings.currentLine.moveTo(0, timleineTop);
+  Settings.currentLine.lineTo(0, timelineBase - 25);
+  Settings.currentLine.pivot.set(.5);
+  Settings.currentLine.cacheAsBitmap = true;
+  
+  Settings.Timeline.addChild(Settings.currentLine, topLine, bottomLine);
   
   // Year markers
   for (let p = 0; p < timelineIntervals - intervalMultiplier + 1; p++) {
@@ -230,7 +295,7 @@ const createTimeline = () => {
     Settings.Timeline.addChild(dot);
     
     let processors = _.where(Settings.releases, { release_date: Settings.years[p] });
-    _.each(processors, (processor) => {
+    _.each(processors, (processor, index) => {
       let pDot = new graphics();
       pDot.pivot.set(.5);
       let heightOffset = map_range(processor.mips, 0, 250000, 40, timelineOffsetY - 50);
@@ -242,7 +307,7 @@ const createTimeline = () => {
         case '64-bit': pDot.beginFill(0x370C9A); break;
       }
       pDot.drawCircle(0, 0, 3);
-      pDot.position.set(timelineDotInterval * p, timelineBase - heightOffset);
+      pDot.position.set(timelineDotInterval * p + (index * 10), timelineBase - heightOffset);
       pDot.interactive = true;
       pDot.interactiveChildren = false;
       // pDot.cacheAsBitmap = true;
@@ -292,23 +357,51 @@ const createBackground = (disableVideo = false) => {
   
 };
 
+
+// Interaction Functions
+const aboutClick = (event) => {
+  if (!Settings.showAbout) {
+    Settings.showAbout = true;
+    event.target.tint = 0x1073C2;
+  
+    let style = {
+      align: 'center',
+      fontFamily: Settings.fontFamily,
+      fontSize: 20,
+      fill: 'white',
+      wordWrap: true,
+      wordWrapWidth: 400
+    };
+    let info = new PIXI.Text('Created by: Jerez Bain\nWebsite: http://gorigins.com\n\nCredits:\nBackground video: Videezy @ http://www.Videezy.com', style);
+    // info.width = style.wordWrapWidth;
+    info.position.set(5, 5);
+  
+    Settings.showAbout = new graphics().beginFill(0x000000, .9).drawRoundedRect(0, 0, style.wordWrapWidth, info.height + 10, 10);
+    Settings.showAbout.pivot.set(.5);
+    Settings.showAbout.position.set(app.renderer.width / 4, app.renderer.height / 4);
+    Settings.showAbout.cacheAsBitmap = true;
+    Settings.Overlay.addChild(Settings.showAbout);
+    Settings.showAbout.addChild(info);
+  } else {
+    event.target.tint = 0xFFFFFF;
+    Settings.Overlay.removeChild(Settings.showAbout);
+    Settings.showAbout = null
+  }
+};
 const timelineObjectMouseOver = (event) => {
   // console.log(event.target.meta);
   // Create Tooltip
-  let container = new graphics().beginFill(0x000000, .66).drawRoundedRect(0, 0, 150, 55, 10);
+  let style = { align: 'left', fontFamily: Settings.fontFamily, fontSize: 12, fill: 'white'};
+  let text = new PIXI.Text(`Intel ${event.currentTarget.meta.name}\n${event.currentTarget.meta.bus_width} Processor\nReleased ${event.currentTarget.meta.release_date}`, style);
+  
+  let container = new graphics().beginFill(0x000000, .66).drawRoundedRect(0, 0, 150, text.height + 10, 10);
   container.pivot.set(.5, 1);
   container.position.set(event.target.x + 25, event.target.y - 75);
   container.cacheAsBitmap = true;
   Settings.Overlay.addChild(container);
-  let style = { align: 'left', fontFamily: Settings.fontFamily, fontSize: 12, fill: 'white'};
   
-  let name = new PIXI.Text('Intel ' + event.currentTarget.meta.name, style);
-  let busWidth = new PIXI.Text(event.currentTarget.meta.bus_width + ' Processor', style);
-  let release = new PIXI.Text('Released ' + event.currentTarget.meta.release_date, style);
-  name.position.set(5, 5);
-  busWidth.position.set(5, 20);
-  release.position.set(5, 35);
-  container.addChild(name, busWidth, release)
+  text.position.set(10, 5);
+  container.addChild(text)
 };
 const timelineObjectMouseOut = (event) => {
   Settings.Overlay.removeChildren();
@@ -319,6 +412,7 @@ const timelineObjectClicked = (event) => {
   
   // Clear container
   TweenMax.killAll(true);
+  TweenMax.to(Settings.currentLine.position, .2, { x: event.target.x });
   Settings.Processor.removeChildren();
   // add sub-containers back
   // set current states
@@ -333,7 +427,7 @@ const timelineObjectClicked = (event) => {
         TweenMax.to(Settings.TimelineProcessors.children[i], .33, {width: 15, height: 15, repeat: -1, yoyo: true});
       }
     }
-  
+    
   }
   Settings.currentProcessor = processor;
   
@@ -351,7 +445,7 @@ const timelineObjectClicked = (event) => {
   busWidth.position.set(0, name.y + name.height);
   release.position.set(0, busWidth.y + busWidth.height);
   Settings.ProcessorStatsLeft.addChild(name, busWidth, release);
-  
+
 // Set Image
   let image = new Sprite(resources[processor.name] ? resources[processor.name].texture : PIXI.Texture.fromImage(processor.image), true);
   image.scale.set(.3);
@@ -377,11 +471,9 @@ const timelineObjectClicked = (event) => {
   imgRect1.blendMode = 4;
   imgRect2.blendMode = 4;
   imgRect3.blendMode = 4;
-
+  
   Settings.ProcessorStatsLeft.addChild(imgRect1, imgRect2, imgRect3);
   Settings.ProcessorStatsLeft.addChild(image);
-  
-  
   
   /* Processor Stats Right Container*/
   // Stats background
@@ -402,38 +494,62 @@ const timelineObjectClicked = (event) => {
     wordWrap: true,
     wordWrapWidth: ContainerWidth
   };
-// Clock Speed text
-  let speedLabel = new PIXI.Text('Clock Speed: Min. (Blue) & Max (Orange)', statsLabelStyle);
+  // Clock Speed text
+  let speedLabel = new PIXI.Text('Clock Speed: Min. (Left) & Max (Right)', statsLabelStyle);
   speedLabel.position.set(10, 60);
   let speedToolTip = createTooltip(ContainerWidth, 'The internal heartbeat of a computer, also known as "clock rate." The clock circuit uses fixed vibrations generated from a quartz crystal to deliver a steady stream of pulses to the CPU.', 'left', 'bottom');
   speedToolTip.position.set(speedLabel.x + speedLabel.width + 15, speedLabel.y + speedLabel.height/2);
   Settings.ProcessorStatsRight.addChild(speedLabel, speedToolTip);
   
   // Clock Speed Bar
-  let min = map_range(processor.clock_speeds.min.simple, Settings.clockMin, Settings.clockMax, 5, ContainerWidth);
-  let max = map_range(processor.clock_speeds.max.simple, Settings.clockMin, Settings.clockMax, 5, ContainerWidth);
-  let speedBar = new graphics().beginFill(0xFFFFFF).drawRoundedRect(0, 0, max-min, 50, 10);
-  let speedBarOverlay = new graphics().beginFill(0xFFFFFF, .5).drawRoundedRect(0, 0, max-min, 50, 10);
-  let speedBarSprite = new Sprite(PIXI.Texture.fromCanvas(createGradient('#1073C2', '#FF9405', max-min, 50)));
-  speedBarSprite.width = StatsBG.width;
+  let oldMin = map_range(Settings.currentMetadata.min , Settings.clockMin, Settings.clockMax, 5, ContainerWidth);
+  let oldMax = map_range(Settings.currentMetadata.max, Settings.clockMin, Settings.clockMax, 5, ContainerWidth);
+  let speedBar = new graphics().beginFill(0xFFFFFF).drawRoundedRect(0, 0, oldMax-oldMin, 50, 10);
+  let speedBarOverlay = new graphics().beginFill(0xFFFFFF, .5).drawRoundedRect(0, 0, oldMax-oldMin, 50, 10);
+  let speedBarSprite = new Sprite(PIXI.Texture.fromCanvas(createGradient('#1073C2', '#FF9405', ContainerWidth, 50)));
+
+  speedBarSprite.width = ContainerWidth;
   speedBarSprite.mask = speedBar;
-  speedBar.position.set(min, 85);
-  speedBarOverlay.position.set(min, 85);
+  
+  speedBar.position.set(oldMin, 85);
+  speedBarOverlay.position.set(oldMin, 85);
+  speedBarSprite.position.set(0, 85);
+  
   speedBarOverlay.blendMode = 4;
-  speedBarSprite.position.set(min, 85);
+  speedBar.cacheAsBitmap = true;
   Settings.ProcessorStatsRight.addChild(speedBarSprite, speedBar, speedBarOverlay);
   
-  let range = map_range();
-  let performanceBar = new graphics().beginFill(0xFFFFFF).drawRoundedRect(0, 0, max, 50, 10);
+  let newMin = map_range(processor.clock_speeds.min.simple, Settings.clockMin, Settings.clockMax, 5, ContainerWidth);
+  let newMax = map_range(processor.clock_speeds.max.simple, Settings.clockMin, Settings.clockMax, 5, ContainerWidth);
+  // move bars
+  TweenMax.to(speedBar.position, .33, { x: newMin });
+  TweenMax.to(speedBarOverlay.position, .33, { x: newMin });
+  // TweenMax.to(speedBarSprite.position, .33, { x: newMin });
+  //
+  TweenMax.to(speedBar, .33, { width: newMax-newMin, onComplete: () => {
+      speedBar = new graphics().beginFill(0xFFFFFF).drawRoundedRect(0, 0, newMax-newMin, 50, 10);
+      // speedBarSprite.mask = speedBar;
+      speedBar.position.x = newMin;
+      speedBar.cacheAsBitmap = true;
+    }});
+  TweenMax.to(speedBarOverlay, .33, { width: newMax-newMin});
+  // TweenMax.to(speedBarSprite, .33, { width: newMax});
+  
+  // let range = map_range();
+  // let performanceBar = new graphics().beginFill(0xFFFFFF).drawRoundedRect(0, 0, max, 50, 10);
   
   let speedLabelStyle = _.extend(_.clone(statsLabelStyle), { align: 'right' } );
   let minLabel = new PIXI.Text(`${processor.clock_speeds.min.value}${processor.clock_speeds.min.unit}`, speedLabelStyle);
   minLabel.position.set(speedBar.x - minLabel.width - 5, speedBar.y + speedBar.height/4);
   let maxLabel = new PIXI.Text(`${processor.clock_speeds.max.value}${processor.clock_speeds.max.unit}`, statsLabelStyle);
   maxLabel.position.set(speedBar.x + speedBar.width + 5, speedBar.y + speedBar.height/4);
+  // move labels
+  TweenMax.to(minLabel.position, .33, { x: newMin - minLabel.width - 5 });
+  TweenMax.to(maxLabel.position, .33, { x: newMax + 5 });
+  
   // update metadata
-  Settings.currentMetadata.min = min;
-  Settings.currentMetadata.mix = max;
+  Settings.currentMetadata.min = processor.clock_speeds.min.simple;
+  Settings.currentMetadata.max = processor.clock_speeds.max.simple;
   Settings.ProcessorStatsRight.addChild(minLabel, maxLabel);
   
   // Transistors Text
@@ -463,14 +579,23 @@ const timelineObjectClicked = (event) => {
   manTechText.position.set(StatsBG.width - 10, 280);
   Settings.ProcessorStatsRight.addChild(manTechText);
   
+  // Manufacturing Tech Text
+  let triviaLabel = new PIXI.Text('History & Trivia', statsLabelStyle);
+  triviaLabel.position.set(10, 350);
+  let triviaToolTip = createTooltip(ContainerWidth, 'The physical size of the elements on a chip\'s design.');
+  triviaToolTip.position.set(triviaLabel.x + triviaLabel.width + 15, triviaLabel.y + triviaLabel.height/2);
+  Settings.ProcessorStatsRight.addChild(triviaLabel, triviaToolTip);
+  
+  let triviaText = new PIXI.Text(processor.trivia, { align: 'left', fontFamily: Settings.fontFamily, fontSize: 20, fill: 'white', wordWrap: true, wordWrapWidth: ContainerWidth});
+  triviaText.position.set(10, 375);
+  Settings.ProcessorStatsRight.addChild(triviaText);
+  
 };
-
 const previousProcessor = (event) => {
   let currentIndex = Settings.currentProcessor
     ? _.findIndex(Settings.TimelineProcessors.children, (child) => child.meta.name === Settings.currentProcessor.name)
     : 0;
   let newIndex = currentIndex === 0 ? Settings.TimelineProcessors.children.length - 1 : currentIndex - 1;
-  TweenMax.killAll(true);
   timelineObjectClicked({ target: Settings.TimelineProcessors.children[newIndex] })
 };
 const nextProcessor = (event) => {
@@ -478,7 +603,6 @@ const nextProcessor = (event) => {
     ? _.findIndex(Settings.TimelineProcessors.children, (child) => child.meta.name === Settings.currentProcessor.name)
     : Settings.TimelineProcessors.children.length - 1;
   let newIndex = currentIndex === Settings.TimelineProcessors.children.length - 1 ? 0 : currentIndex + 1;
-  TweenMax.killAll(true);
   timelineObjectClicked({ target: Settings.TimelineProcessors.children[newIndex] })
 };
 
@@ -544,3 +668,15 @@ function createGradient(color1, color2, width = 200, height = 60) {
 function map_range(value, low1, high1, low2, high2) {
   return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
 }
+
+// resize event
+window.onresize = (event) => {
+  let w = window.innerWidth;
+  let h = window.innerHeight;    //this part resizes the canvas but keeps ratio the same
+  app.view.style.width = w + "px";
+  app.view.style.height = h + "px";
+  //this part adjusts the ratio:
+  app.renderer.resize(w,h);
+  
+  
+};
